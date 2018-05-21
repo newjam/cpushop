@@ -91,9 +91,10 @@ except TypeError:
 
 payment = payment[:sp]
 ```
-Then we see in lines `50-52` that the query string sans the signature is signed, and compared to the signature that was in the order.
+Then we see in lines `49-52` that the query string sans the signature is signed, and compared to the signature that was in the order.
 
 ```python
+signchk = sha256(signkey+payment).digest()
 if signchk != sign:
     print 'Invalid Order!'
     return
