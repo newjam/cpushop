@@ -10,20 +10,19 @@ def order(io, p_id):
   io.recvuntil('Product ID: ')
   io.sendline(str(p_id))
   io.recvuntil('Your order:\n')
-  o = io.recvline()[:-1]
-  return o
+  return io.recvline()[:-1]
 
 def pay(io, o):
   io.recvuntil('Command: ')
   io.sendline('3')
-  io.recvuntil('Your order:') # remote uses this
-  # io.recvuntil('Your order:\n') # local uses this
+  #io.recvuntil('Your order: ') # remote uses this
+  io.recvuntil('Your order:\n') # local uses this
   io.sendline(o)
 
   r = io.recvline()[:-1]
   if r.startswith('Invalid Order!'):
     raise Exception(r)
-  if r == 'Go away you poor bastard!':
+  if r.startswith('Go away'):
     raise Exception(r)
 
   money = int(r[len('Your current money: $'):])

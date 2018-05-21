@@ -1,4 +1,3 @@
-from pwn import process, remote, context, log
 from hashpumpy import hashpump
 from string import letters, digits
 from random import choice
