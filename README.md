@@ -64,7 +64,7 @@ On line `14` we see that `signkey` is a random alphanumeric string of length bet
 signkey = ''.join([random.choice(string.letters+string.digits) for _ in xrange(random.randint(8,32))])
 ```
 
-On line `28` to `29` in the `order` method we see that a new order is signed using the following scheme:
+On line `28-29` in the `order` method we see that a new order is signed using the following scheme:
 ```python
 sign = sha256(signkey+payment).hexdigest()
 payment += '&sign=%s' % sign
@@ -75,7 +75,7 @@ A `sha256` hash is not intended to be used as a message authentication code as i
 Given only a `message`, the signature of the message (i.e. `sha256(key + message)`), and the length of the `key`, we use this attack to concatenate onto the original message and find the signature of this new message without knowing the key.
 Since we don't know the length of the `key`, except that it's between 8 and 32, we can attempt to forge an `order` for each of these lengths.
 
-On lines `36-48` of the pay function we see the order query string is split into the signature and the rest of the parameters.
+On lines `36-48` of the `pay` function we see the order query string is split into the signature (i.e. `sign`) and the rest of the parameters (i.e. `payment`).
 ```python
 payment = raw_input().strip()
 sp = payment.rfind('&sign=')
@@ -125,7 +125,7 @@ def modify(o, key_len):
   new_signature, modified_message =  hashpump(signature, message, '&price=1', key_len)
   return modified_message + split + new_signature
 ```
-The rest of the program connects to the service, orders the "Flag" product, for each possible key length, calls `modify` to forge a flag order string to set the price to `, and attempts to `pay` using this forged order.
+The rest of the program connects to the service, `order`s the "Flag" product, then for each possible key length, calls `modify` to forge a flag order string to set the price to 1, and attempts to `pay` using this forged order.
 
 Running the program we get
 ```
