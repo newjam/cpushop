@@ -9,14 +9,16 @@ def order(io, p_id):
   io.sendline(str(2))
   io.recvuntil('Product ID: ')
   io.sendline(str(p_id))
-  io.recvuntil('Your order:\n')
+  io.recvuntil('Your order:')
+  io.recvline()
   return io.recvline()[:-1]
 
 def pay(io, o):
   io.recvuntil('Command: ')
   io.sendline('3')
   #io.recvuntil('Your order: ') # remote uses this
-  io.recvuntil('Your order:\n') # local uses this
+  io.recvuntil('Your order:') # local uses this
+  io.recvline()
   io.sendline(o)
 
   r = io.recvline()[:-1]
@@ -36,7 +38,8 @@ def pay(io, o):
 
 def connect():
   #return remote('cpushop.2018.teamrois.cn', 43000)
-  return process(['python', './cpushop.py'])
+  #return process(['python', './cpushop.py'])
+  return remote('127.0.0.1', 43000)
 
 def modify(o, key_len):
   split = '&sign='
@@ -47,7 +50,7 @@ def modify(o, key_len):
   return modified_message + split + new_signature
 
 def main():
-  context.log_level = 'info'
+  context.log_level = 'debug'
   io = connect()
   o = order(io, 9)
   log.debug('Original Order:', o)
