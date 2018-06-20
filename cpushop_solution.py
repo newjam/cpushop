@@ -11,7 +11,7 @@ def order(io, p_id):
   io.sendline(str(p_id))
   io.recvuntil('Your order:')
   io.recvline()
-  return io.recvline()[:-1]
+  return io.recvline().strip()
 
 def pay(io, o):
   io.recvuntil('Command: ')
@@ -21,7 +21,7 @@ def pay(io, o):
   io.recvline()
   io.sendline(o)
 
-  r = io.recvline()[:-1]
+  r = io.recvline().strip()
   if r.startswith('Invalid Order!'):
     raise Exception(r)
   if r.startswith('Go away'):
@@ -29,7 +29,7 @@ def pay(io, o):
 
   money = int(r[len('Your current money: $'):])
   io.recvuntil('You have bought ')
-  product = io.recvline()[:-1]
+  product = io.recvline().strip()
   if product == 'Flag':
     io.recvuntil('Good job! Here is your flag: ')
     flag = io.recvline()[:-1]
@@ -50,15 +50,15 @@ def modify(o, key_len):
   return modified_message + split + new_signature
 
 def main():
-  context.log_level = 'debug'
+  context.log_level = 'info'
   io = connect()
   o = order(io, 9)
-  log.debug('Original Order:', o)
+  log.debug('Original Order: ' + o)
   progress = log.progress('Finding flag')
   for key_len in xrange(8, 32):
     progress.status('Trying key length of ' + str(key_len))
     modified = modify(o, key_len)
-    log.debug('Modified Order:', modified)
+    log.debug('Modified Order: ' + modified)
     try:
       m, p, flag = pay(io, modified)
       progress.success(flag)
